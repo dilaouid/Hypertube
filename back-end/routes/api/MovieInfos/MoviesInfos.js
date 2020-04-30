@@ -29,10 +29,10 @@ const timeConverter = (timestamp) => {
     return time;
 }
 
-const checkYTSquality = (ytsInfo, quality) => {
+const checkYTSquality = (infoYTS, quality) => {
     var correctQuality = false
-        for (var index = 0; index < ytsInfo.length; index++) {
-            if (ytsInfo[index].quality == quality) {
+        for (var index = 0; index < infoYTS.length; index++) {
+            if (infoYTS[index].quality == quality) {
                 correctQuality = true
                 break;
             }
@@ -66,12 +66,10 @@ const createInstance = async (baseUrl, type) => {
                         title: res.data.title,
                         original_language: res.data.original_language,
                         inYTS: false,
-                        ytsInfo: [],
-                        inLeet: false,
-                        production_corp: res.data.production_companies,
-                        production_country: res.data.production_countries,
+                        in1377: false,
+                        torrentInfos: { infoYTS: [], info1377: [] },
+                        prod: {production_corp: res.data.production_companies, production_country: res.data.production_countries},
                         subtitles: [],
-                        leetInfo: []
                     };
                     return data
                 }
@@ -158,12 +156,12 @@ const parseData = async (req, res) => {
         var inYTS = await createInstance(baseURL_yts, 'yts')
         if (inYTS != null) {
             dataMovie.inYTS = true
-            dataMovie.ytsInfo = inYTS.torrents
+            dataMovie.torrentInfos.infoYTS = inYTS.torrents
         }
-        var isInLEET = await leetSearch(dataMovie.title)
-        if (isInLEET) {
-            dataMovie.inLeet = true
-            dataMovie.leetInfo = isInLEET
+        var isin1377 = await leetSearch(dataMovie.title)
+        if (isin1377) {
+            dataMovie.in1377 = true
+            dataMovie.torrentInfos.info1377 = isin1377
         }
         var sub = await subtitles.getSubtitles(dataMovie.imdb_code)
         if (sub.en || sub.fr)
