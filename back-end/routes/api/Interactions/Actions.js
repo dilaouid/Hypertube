@@ -237,7 +237,7 @@ const updateInfos = async (req, res) => {
             });
         }
 
-        if (username && getExistingUsernameFromId && !getExistingUsernameFromId.oauthID) {  getExistingUsernameFromId.username = username }
+        if (username && getExistingUsernameFromId) {  getExistingUsernameFromId.username = username }
         if (firstname) {  getExistingUsernameFromId.firstname = firstname }
         if (lastname) {  getExistingUsernameFromId.lastname = lastname }
         if (email) {  getExistingUsernameFromId.email = email }

@@ -16,6 +16,19 @@ const apiKey    = 'f29f2233f1aa782b0f0dc8d6d9493c64'
 /*----------------------------------------------*/
 /************************************************/
 
+const timeConverter = (timestamp) => {
+    var a = new Date(timestamp * 1000);
+    var months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+}
+
 const checkYTSquality = (ytsInfo, quality) => {
     var correctQuality = false
         for (var index = 0; index < ytsInfo.length; index++) {
@@ -155,6 +168,26 @@ const parseData = async (req, res) => {
         var sub = await subtitles.getSubtitles(dataMovie.imdb_code)
         if (sub.en || sub.fr)
             dataMovie.subtitles = sub
+        var getMovieDB = await Movie.findOne({ imdb_code: dataMovie.imdb_code })
+        if (getMovieDB) {
+            dataMovie.HypeerTube = {views: 0, likes: 0, downloaded: false, comments: Array()}
+            dataMovie.HypeerTube.views = getMovieDB.userViews.length
+            dataMovie.HypeerTube.likes = getMovieDB.like.length
+            var alreadyDL = false
+            if (getMovieDB.downloaded.length > 0) {
+                for (let i = 0; i < getMovieDB.downloaded.length; i++) {
+                    if (getMovieDB.downloaded[i].state === true)
+                    alreadyDL = true;
+                }
+            }
+            var comments = Array()
+            dataMovie.HypeerTube.downloaded = alreadyDL
+            for (let j = 0; j < getMovieDB.comments.length; j++) {
+                let addComment = {user: getMovieDB.comments[j].user, comment: getMovieDB.comments[j].comment, date: timeConverter(getMovieDB.comments[j].date)}
+                comments.push(addComment)
+            }
+            dataMovie.HypeerTube.comments = comments
+        }
         res.json(dataMovie);
     } catch (err) {
         // console.log(err)
