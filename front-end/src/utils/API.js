@@ -87,7 +87,7 @@ export default {
             }
         )
     },
-    getHistory: (username) => {
+    getHistory: (username = null) => {
         return axios.get(
             `${burl}/history/${username}`,
             {

@@ -347,11 +347,15 @@ const getWatchlist = async (req, res) => {
 }
 
 const getHistory = async (req, res) => {
-    var username = req.params.username;
-    if (!username) { return res.status(404).json({}) }
+    var user = req.params.username != 'null' ? req.params.username : res.locals.id
     try {
-        var userDatas = await User.findOne({username: username})
-        if (!userDatas) { throw new Error ('No user found with this username: ', username); }
+        var userDatas
+        if (user == res.locals.id) {
+            userDatas = await User.findById(user)
+        } else {
+            userDatas = await User.findOne({username: user})
+        }
+        if (!userDatas) { throw new Error ('No user found with this parameter: ', user); }
         return res.json(userDatas.history)
     } catch (err) { res.status(403).json({}) }
 }
