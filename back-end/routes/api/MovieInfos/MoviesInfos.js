@@ -70,6 +70,7 @@ const createInstance = async (baseUrl, type) => {
                         torrentInfos: { infoYTS: [], info1377: [] },
                         prod: {production_corp: res.data.production_companies, production_country: res.data.production_countries},
                         subtitles: [],
+                        HypeerTube: {views: 0, likes: 0, downloaded: false, comments: Array()}
                     };
                     return data
                 }
@@ -168,7 +169,6 @@ const parseData = async (req, res) => {
             dataMovie.subtitles = sub
         var getMovieDB = await Movie.findOne({ imdb_code: dataMovie.imdb_code })
         if (getMovieDB) {
-            dataMovie.HypeerTube = {views: 0, likes: 0, downloaded: false, comments: Array()}
             dataMovie.HypeerTube.views = getMovieDB.userViews.length
             dataMovie.HypeerTube.likes = getMovieDB.like.length
             var alreadyDL = false
